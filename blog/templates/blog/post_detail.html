@@ -11,59 +11,52 @@
     {% else %}
     <span class="badge badge-secondary float-right">미분류</span>
     {% endif %}
-<!-- Page content-->
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-lg-8">
-                <!-- Post content-->
-                <article>
-                    <!-- Post header-->
-                    <header class="mb-4">
-                        <!-- Post title-->
-                        <h1 class="fw-bolder mb-1">{{ post.title }}</h1>
-                        <h5 class="text-muted">{{ post.hook_text }}</h5>
-                        <!-- Author -->
-                        <p class="lead">
-                            by
-                            <a href="#">{{ post.author | upper }}</a>
-                        </p>
-                        <!-- Post meta content-->
-                        <div class="text-muted fst-italic mb-2">{{ post.created_at }}</div>
-                        <hr>
-                    </header>
-                    <!-- Preview image figure-->
-                    <figure class="mb-4">
-                        {% if post.head_image %}
-                        <img class="img-fluid rounded" src="{{ post.head_image.url }}" alt="{{ post.title }} head_image" />
-                        {% else %}
-                        <img class="img-fluid rounded" src="https://picsum.photos/seed/{{ post.id }}/800/200" alt="random_image" />
-                        {% endif %}
-                    </figure>
-                    <!-- Post content-->
-                    <section class="mb-5">
-                        <p>{{ post.content }}</p>
-                        {% if post.file_upload %}
-                        <a href="{{ post.file_upload.url }}" class="btn btn-outline-dark" role="button">
-                            Download:
+    <!-- Post content-->
+    <article>
+        <!-- Post header-->
+        <header class="mb-4">
+            <!-- Post title-->
+            <h1 class="fw-bolder mb-1">{{ post.title }}</h1>
+            <h5 class="text-muted">{{ post.hook_text }}</h5>
+            <!-- Author -->
+            <p class="lead">
+                by
+                <a href="#">{{ post.author | upper }}</a>
+            </p>
+            <!-- Post meta content-->
+            <div class="text-muted fst-italic mb-2">{{ post.created_at }}</div>
+            <hr>
+        </header>
+        <!-- Preview image figure-->
+        <figure class="mb-4">
+            {% if post.head_image %}
+            <img class="img-fluid rounded" src="{{ post.head_image.url }}" alt="{{ post.title }} head_image" />
+            {% else %}
+            <img class="img-fluid rounded" src="https://picsum.photos/seed/{{ post.id }}/800/200" alt="random_image" />
+            {% endif %}
+        </figure>
+        <!-- Post content-->
+        <section class="mb-5">
+            <p>{{ post.content }}</p>
+            {% if post.file_upload %}
+            <a href="{{ post.file_upload.url }}" class="btn btn-outline-dark" role="button">
+                Download:
 
-                            {% if post.get_file_ext == 'csv' %}
-                            <i class="fa-solid fa-file-csv"></i>
-                            {% elif post.get_file_ext == 'xlsx' or post.get_file_ext == 'xls' %}
-                            <i class="fa-solid fa-file-excel"></i>
-                            {% elif post.get_file_ext == 'dock' or post.get_file_ext == 'doc' %}
-                            <i class="fa-solid fa-file-word"></i>
-                            {% else %}
-                            <i class="fa-solid fa-file"></i>
-                            {% endif %}
-                            {{ post.get_file_name }}
-                        </a>
-                        {% endif %}
-                        <hr>
-                    </section>
-                </article>
-            </div>
-        </div>
-    </div>
+                {% if post.get_file_ext == 'csv' %}
+                <i class="fa-solid fa-file-csv"></i>
+                {% elif post.get_file_ext == 'xlsx' or post.get_file_ext == 'xls' %}
+                <i class="fa-solid fa-file-excel"></i>
+                {% elif post.get_file_ext == 'dock' or post.get_file_ext == 'doc' %}
+                <i class="fa-solid fa-file-word"></i>
+                {% else %}
+                <i class="fa-solid fa-file"></i>
+                {% endif %}
+                {{ post.get_file_name }}
+            </a>
+            {% endif %}
+            <hr>
+        </section>
+    </article>
 </div>
 
 <div id="comment-area">
