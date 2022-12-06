@@ -4,7 +4,7 @@
 
     {% if user.is_authenticated %}
         {% if user.is_superuser or user.is_staff %}
-            <a class="btn btn-info btn-sm float-right" href="/blog/create_post/" role="button"><i class="fas fa-pem"></i>&nbsp;&nbsp;New Post</a>
+            <a class="btn btn-info btn-sm float-right" href="/blog/create_post/" role="button"><i class="fas fa-pen"></i> New Post</a>
         {% endif %}
     {% endif %}
 
@@ -42,7 +42,7 @@
               {% if p.tags.exists %}
                 <i class="fa-solid fa-tag"></i>
                 {% for tag in p.tags.iterator %}
-                    <a href="{{ tag.get_absolute_url }}"><span class="badge rounded-pill text-bg-primary">{{ tag }}</span></a>
+                    <a href="{{ tag.get_absolute_url }}"><span class="badge badge-pill badge-light">{{ tag }}</span></a>
                 {% endfor %}
                 <br/>
                 <br/>
