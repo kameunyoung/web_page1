@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
+from django.utils.text import slugify
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404
 from . models import Post, Category, Tag, Comment
 from .forms import CommentForm
 from django.core.exceptions import PermissionDenied
-from django.utils.text import slugify
 from django.db.models import Q
 
 # Create your views here.
@@ -13,7 +13,6 @@ class PostList(ListView) :
     model = Post
     ordering = '-pk'
     paginate_by = 5
-
     def get_context_data(self, **kwargs):
         context = super(PostList, self).get_context_data()
         context['categories'] = Category.objects.all()
@@ -39,14 +38,11 @@ class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         if current_user.is_authenticated and (current_user.is_staff or current_user.is_superuser):
             form.instance.author = current_user
             response = super(PostCreate, self).form_valid(form)
-
             tags_str = self.request.POST.get('tags_str')
             if tags_str:
                 tags_str = tags_str.strip()
-
                 tags_str = tags_str.replace(',', ';')
                 tags_list = tags_str.split(';')
-
                 for t in tags_list:
                     t = t.strip()
                     tag, is_tag_created = Tag.objects.get_or_create(name=t)
@@ -55,16 +51,13 @@ class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
                         tag.save()
                     self.object.tags.add(tag)
             return response
+            # return super(PostCreate, self).form_valid(form)
         else:
             return redirect('/blog/')
-
-
 class PostUpdate(LoginRequiredMixin, UpdateView):
     model = Post
-    fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category', 'tags']
-
+    fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category']
     template_name = 'blog/post_update_form.html'
-
     def get_context_data(self, **kwargs):
         context = super(PostUpdate, self).get_context_data()
         if self.object.tags.exists():
@@ -73,23 +66,19 @@ class PostUpdate(LoginRequiredMixin, UpdateView):
                 tags_str_list.append(t.name)
             context['tags_str_default'] = '; '.join(tags_str_list)
         return context
-
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and request.user == self.get_object().author:
             return super(PostUpdate, self).dispatch(request, *args, **kwargs)
         else:
             raise PermissionDenied
-
     def form_valid(self, form):
         response = super(PostUpdate, self).form_valid(form)
         self.object.tags.clear()
-
         tags_str = self.request.POST.get('tags_str')
         if tags_str:
             tags_str = tags_str.strip()
             tags_str = tags_str.replace(',', ';')
             tags_list = tags_str.split(';')
-
             for t in tags_list:
                 t = t.strip()
                 tag, is_tag_created = Tag.objects.get_or_create(name=t)
@@ -98,7 +87,6 @@ class PostUpdate(LoginRequiredMixin, UpdateView):
                     tag.save()
                 self.object.tags.add(tag)
         return response
-
 def category_page(request, slug) :
     if slug == 'no_category' :
         category = '미분류'
@@ -129,11 +117,9 @@ def tag_page(request, slug):
             'no_category_post_count': Post.objects.filter(category=None).count(),
         }
     )
-
 def new_comment(request, pk):
     if request.user.is_authenticated:
         post = get_object_or_404(Post, pk=pk)
-
         if request.method == 'POST':
             comment_form = CommentForm(request.POST)
             if comment_form.is_valid():
@@ -146,17 +132,14 @@ def new_comment(request, pk):
             return redirect(post.get_absolute_url())
     else:
         raise PermissionDenied
-
 class CommentUpdate(LoginRequiredMixin, UpdateView):
     model = Comment
     form_class = CommentForm
-
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and request.user == self.get_object().author:
             return super(CommentUpdate, self).dispatch(request, *args, **kwargs)
         else:
             raise PermissionDenied
-
 def delete_comment(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     post = comment.post
